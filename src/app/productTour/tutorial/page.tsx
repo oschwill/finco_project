@@ -29,7 +29,7 @@ const Tutorial = () => {
 
         <button className="btn text-white px-10 bg-gradient-linear">
           <Link href={"/productTour/getStarted"} className="flex gap-4 ">
-            Next{" "}
+            Next
             <Image
               className="h-5 w5"
               src="/arrow.svg"
