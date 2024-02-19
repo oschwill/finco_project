@@ -9,12 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
+        "gradient-linear": "linear-gradient(180deg, #44BBFE 0%, #1E78FE 100%)",
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: { primary : "#44BBFE"}
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };
 export default config;
