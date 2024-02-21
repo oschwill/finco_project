@@ -20,7 +20,7 @@ const CreditCard = () => {
   return (
     <>
       <div className='h-44 my-5'>
-        <div className='w-4/5 h-full my-0 mx-auto bg-[url("/img/home/card-bg-noshadow.svg")] bg-contain bg-center bg-no-repeat border'>
+        <div className='w-4/5 h-full my-0 mx-auto bg-[url("/img/home/card-bg-noshadow.svg")] bg-contain bg-center bg-no-repeat'>
           <div className='relative'>
             {user.card_verified ? (
               <img
@@ -36,9 +36,11 @@ const CreditCard = () => {
               />
             )}
           </div>
-          <div className='flex justify-between mt-24'>
-            <p className='pl-16 text-sm'>{user.card_last_digits}</p>
-            <p className='pr-5 pt-10 text-xs'>{user.card_exp_date}</p>
+          <div className='flex justify-between mt-6'>
+            <p className='pl-16 text-sm text-white'>{user.card_last_digits}</p>
+            <p className='pr-5 pt-10 text-xs text-white'>
+              {user.card_exp_date}
+            </p>
           </div>
         </div>
       </div>
