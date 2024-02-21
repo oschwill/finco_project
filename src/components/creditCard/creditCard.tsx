@@ -36,7 +36,7 @@ const CreditCard = () => {
               />
             )}
           </div>
-          <div className='flex justify-between mt-6'>
+          <div className='data flex justify-between mt-6 pt-24'>
             <p className='pl-16 text-sm text-white'>{user.card_last_digits}</p>
             <p className='pr-5 pt-10 text-xs text-white'>
               {user.card_exp_date}
