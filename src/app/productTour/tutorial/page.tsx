@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Tutorial = () => {
   return (
-    <div className="grid h-screen place-items-center">
+    <div className="grid h-screen text-textColor place-items-center">
       <Image
         className="h-auto w-auto"
         priority={true}
@@ -28,7 +28,10 @@ const Tutorial = () => {
         </button>
 
         <button className="btn text-white px-10 bg-gradient-linear">
-          <Link href={"/productTour/getStarted"} className="flex gap-4 ">
+          <Link
+            href={"/productTour/getStarted"}
+            className="flex items-center gap-4 "
+          >
             Next
             <Image
               className="h-5 w5"

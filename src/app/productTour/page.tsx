@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -7,7 +8,6 @@ const SplashScreen = () => {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("hello");
     setTimeout(() => {
       router.push("/productTour/tutorial");
     }, 2000);
