@@ -14,10 +14,17 @@
   --background-end-rgb: 255, 255, 255;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.light {
+  --account-bg: 226, 232, 240;
+  --text-color: 0, 0, 0;
+  --icon-color: 0, 0, 0;
+}
+
+.dark {
+  --account-bg: 100, 116, 139;
+  --text-color: 255, 255, 255;
+  --icon-color: 255, 255, 255;
+  background: rgb(24, 23, 23);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -28,7 +35,7 @@
   } */
 }
 
-body {
+/* body {
   color: rgb(var(--foreground-rgb));
   /* width: 390px;
   height: 100vh;
