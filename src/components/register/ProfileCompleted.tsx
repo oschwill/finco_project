@@ -8,8 +8,10 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useRef, useState } from 'react';
+import Loading from '../icons/Loading';
 
 const ProfileCompleted: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [error, setErrorMessage] = useState(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,32 +38,17 @@ const ProfileCompleted: React.FC = () => {
 
   const handleCompleteRegister = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     setErrorMessage(null);
-    const isValid = await completeRegister(e, route);
+
+    const { isValid, message } = await completeRegister(e, route);
 
     if (!isValid) {
-      setErrorMessage('Please fill in your Cardnumber');
+      setErrorMessage(message);
     }
+
+    setIsLoading(false);
   };
-
-  // async function create(formData: FormData) {
-  //   const registerData = await getCookieData();
-
-  //   if (!registerData) {
-  //     route.push('/register');
-  //     return;
-  //   }
-
-  //   Object.entries(registerData).forEach(([key, value]) => {
-  //     if (key !== 'terms') {
-  //       if (typeof value === 'string' || value instanceof Blob) {
-  //         formData.append(key, value);
-  //       }
-  //     }
-  //   });
-
-  //   completeRegister(formData);
-  // }
 
   return (
     <form className="mb-8 flex flex-col gap-28" onSubmit={handleCompleteRegister}>
@@ -124,9 +111,13 @@ const ProfileCompleted: React.FC = () => {
           </span>
         )}
       </div>
-      <button className="mt-16 bg-gradient-to-b from-buttonBgGradientFrom to-buttonBgGradientTo p-8 rounded-[25px] text-[1.5rem] text-white">
-        Profile Complete
-      </button>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <button className="mt-16 bg-gradient-to-b from-buttonBgGradientFrom to-buttonBgGradientTo p-8 rounded-[25px] text-[1.5rem] text-white">
+          Profile Complete
+        </button>
+      )}
     </form>
   );
 };

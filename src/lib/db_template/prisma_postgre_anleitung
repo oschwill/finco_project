@@ -1,0 +1,42 @@
+/* WIR ERSTELLEN MIT DEM PRISMA SCHEMA DIE DATENBANK TABLE STRUKTUREN !*/
+
+1.) Prisma Client installieren / alternativ auch Prisma in die dev dependencies installieren
+2.) mit dem Befehlt npx prisma init erzeugen wir einen prisma Ordner im root und eine Datei schema.prisma. <= Um Color Highlighting zu aktivieren brauchen wir die Extension Prisma für den vscode
+3.) Wir erstellen in der schema.prisma das Model für die jeweilige Tabelle, Beispiel => model User { id int @id @default(autoincrement()), ...}
+4.) Danach erstellen wir eine migration um die Datenbank mit dem Schema zu synchronisieren, 
+dies geschieht jedesmal wenn wir Änderungen an den Tables vorgenommen haben oder neue hinzugefügt/gelöscht haben bzw. Beziehungen hergestellt haben. 
+Die Migration erzeugen wir mit "npx prisma migrate dev --name your_migration_name" <= der name ist nur eine Beschreibung, für die UserTabelle könnte man also npx prisma migrate dev --name add_user_table eingeben
+5.)Der Befehl "npx prisma generate" wird verwendet, um den Prisma Client zu generieren oder zu aktualisieren. Er dient zur Ausführung von queries auf unsere DB.
+Wir erzeugen uns also zuletzt mit "npx prisma generate" den Prisma Client. Im Client sind alle Methoden für CRUD Operationen enthalten
+
+/**
+* Die Migrations legt er unter prisma/migrations an
+**/
+
+/* FOLGENDE FUNCTION ZUR ERRECHNUNG DES GESAMTKAPITALS UND ZUR AUTOMATISCHEN DURCHFÜHRUNG NACH MANIPULATION DER TRANSACTION TABLES 
+    DURCH DEN TRIGGER MÜSSEN MANUELL IN DIE DB QUERY TOOL EINEFÜGT WERDEN!!*/
+CREATE FUNCTION public.update_user_balance() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+  -- Berechne das neue Gesamtkapital für den Benutzer der von der Transaktion betroffen ist
+    UPDATE users
+    SET total_capital = (
+        SELECT SUM(
+            CASE
+                WHEN transaction_type = 'income' THEN amount
+                WHEN transaction_type = 'expense' THEN -amount
+                ELSE 0
+            END
+        )
+        FROM transactions
+        WHERE user_id = NEW.user_id
+    )
+    WHERE id = NEW.user_id;
+
+    RETURN NEW;
+END;
+$$;
+
+/* UND DANN Erstellen wir den Trigger dazu */
+CREATE TRIGGER trigger_update_balance AFTER INSERT OR DELETE OR UPDATE ON public.transactions FOR EACH ROW EXECUTE FUNCTION public.update_user_balance();

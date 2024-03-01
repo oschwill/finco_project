@@ -1,6 +1,5 @@
 import nodemailer from 'nodemailer';
 
-// Wir definieren in TS ein Interface zur Validierung der Datentypen aus den sendDynamicEmail Params
 interface EmailOptions {
   email: string;
   subject: string;

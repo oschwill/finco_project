@@ -7,9 +7,9 @@ import { redirect } from 'next/navigation';
 
 export const registerUserForm = async (previousState, formData: FormData) => {
   const formObject = Object.fromEntries(formData.entries());
-  const { name, email, password, terms } = formObject;
+  const { name, email, password, passwordRepeat, terms } = formObject;
 
-  const filteredObject = { name, email, password, terms };
+  const filteredObject = { name, email, password, passwordRepeat, terms };
   // formObject validieren
   const { value, error } = registerAccountSchema.validate(filteredObject);
 
@@ -28,16 +28,27 @@ export const registerUserForm = async (previousState, formData: FormData) => {
     body: JSON.stringify(value),
   });
 
-  if (response.ok) {
-    redirect('/register/setupAccount');
+  if (!response.ok) {
+    const data = await response.json();
+
+    if (data.email) {
+      return {
+        error: {
+          type: 'email',
+          message: 'This Email Address is not available',
+        },
+      };
+    }
+
+    return {
+      error: {
+        type: 'any',
+        message: 'There went something wrong',
+      },
+    };
   }
 
-  return {
-    error: {
-      type: 'any',
-      message: 'There went something wrong',
-    },
-  };
+  redirect('/register/setupAccount');
 };
 
 export const completeRegister = async (
@@ -48,16 +59,16 @@ export const completeRegister = async (
   const cardNumber = formData.get('cardNumber') as string | null;
 
   if (!cardNumber) {
-    return false;
+    return { isValid: false, message: 'Please fill in your Cardnumber' };
   }
 
   // Wir holen uns die CookieDaten
   const cookieData = await getCookieData();
 
   if (!cookieData) {
-    // Wenn cookie abgelaufen oder nicht angelegt wurde leiten wir um
+    // Wenn cookie abgelaufen oder nicht angelegt wurde leiten wir um auf die erste register page
     route.push('/register');
-    return;
+    return { isValid: true, message: null };
   }
 
   // Cookie Data an die formData anhängen
@@ -71,15 +82,16 @@ export const completeRegister = async (
   const response = await fetch(`/api/register`, {
     method: 'POST',
     body: formData,
+    credentials: 'include',
   });
 
   if (response.ok) {
     // Weiterleiten auf die Login Seite
-    route.push('/login');
-    return true;
+    route.push('/login?registered=true');
+    return { isValid: true, message: null };
   }
 
-  return false;
+  return { isValid: false, message: 'an unexpected error occurred' };
 };
 
 export const getCookieData = async () => {

@@ -3,7 +3,7 @@ import { faGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoginForm from '@/components/login/LoginForm';
 import Link from 'next/link';
-import { handleGithubLogin } from '@/lib/action';
+import { handleGithubLogin, handleGoogleLogin } from '@/lib/action';
 
 const Login = () => {
   return (
@@ -24,7 +24,7 @@ const Login = () => {
               </div>
             </button>
           </form>
-          <form>
+          <form action={handleGoogleLogin}>
             <button className="border-2 w-full p-4 rounded-[25px] text-[1.5rem] flex items-center justify-center gap-8 cursor-pointer">
               <FontAwesomeIcon icon={faGoogle} className="h-16" />
               <span>Login with Google</span>

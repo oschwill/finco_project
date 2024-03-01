@@ -1,11 +1,18 @@
 'use client';
 
 import { registerUserForm } from '@/lib/clientAction';
-import React from 'react';
+import React, { useState } from 'react';
 import { useFormState } from 'react-dom';
+import FormSubmitButton from '../buttons/FormSubmitButton';
+import TermsAndService from './TermsAndService';
 
 const RegisterForm: React.FC = () => {
   const [state, formAction] = useFormState(registerUserForm, undefined);
+  const [showTerms, setShowTerms] = useState(false);
+
+  const handleSetShowTerms = () => {
+    setShowTerms((cur) => !cur);
+  };
 
   return (
     <form className="mb-8 flex flex-col gap-8" action={formAction}>
@@ -45,6 +52,18 @@ const RegisterForm: React.FC = () => {
           placeholder="Password"
         />
       </div>
+      <div>
+        <label htmlFor="passwordRepeat"></label>
+        <input
+          type="password"
+          name="passwordRepeat"
+          id="passwordRepeat"
+          className={`${
+            state?.error && state?.error.type === 'passwordRepeat' && 'border-red-600'
+          } border-2 w-full border-inputBorderColor p-6 rounded-[25px] text-[1.5rem]`}
+          placeholder="Confirm password"
+        />
+      </div>
       <div className=" text-[1.5rem] flex items-center gap-6">
         <input
           type="checkbox"
@@ -58,7 +77,10 @@ const RegisterForm: React.FC = () => {
           } scale-150 checkbox`}
         />
         <label htmlFor="terms">
-          Agree to our <span className="font-bold">Terms and Service</span>
+          Agree to our{' '}
+          <span className="font-bold" onClick={handleSetShowTerms}>
+            Terms and Service
+          </span>
         </label>
       </div>
       <div className="relative">
@@ -68,9 +90,8 @@ const RegisterForm: React.FC = () => {
           </span>
         )}
       </div>
-      <button className="mt-16 bg-gradient-to-b from-buttonBgGradientFrom to-buttonBgGradientTo p-8 rounded-[25px] text-[1.5rem] text-white">
-        Register Now
-      </button>
+      <FormSubmitButton text="Register Now" />
+      {showTerms && <TermsAndService onHandleSetShowTerms={handleSetShowTerms} />}
     </form>
   );
 };

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
+import prisma from '@/lib/db';
 import bcrypt from 'bcrypt';
 
 export async function GET(req: NextRequest) {
@@ -17,7 +18,28 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
+  const { name, email, password } = await req.json();
+  const body = { name, email, password };
+
+  // Abfragen ob die email Adresse schon existiert
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: body.email,
+      },
+    });
+
+    if (user) {
+      throw new Error();
+    }
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, email: true },
+      {
+        status: 400,
+      }
+    );
+  }
 
   const salt = await bcrypt.genSalt(10);
   body.password = await bcrypt.hash(body.password, salt);
@@ -28,7 +50,8 @@ export async function POST(req: NextRequest) {
     value: JSON.stringify(body),
     httpOnly: true,
     path: '/api/session', // Nur gültig auf dieser Route
-    maxAge: 10 * 60,
+    maxAge: 10 * 60, // 10 Minuten gültig
+    secure: true,
   });
 
   const response = cookies().get('tmpRegister')

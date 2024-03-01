@@ -6,5 +6,6 @@ export const registerAccountSchema = Joi.object({
     .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net', 'de'] } })
     .required(),
   password: Joi.string().min(8).pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+  passwordRepeat: Joi.any().valid(Joi.ref('password')).required(),
   terms: Joi.string().valid('terms').required(),
 });

@@ -24,7 +24,7 @@ export const checkCookieIfExists = (cookieName: string): boolean => {
 };
 
 /* KREDIT KARTE CHECKEN  */
-const isValidCreditCardNumber = (value: string) => {
+const isValidCreditCardNumber = (value: string): boolean => {
   const num = value.replace(/\D/g, '');
 
   let sum = 0;
@@ -45,4 +45,19 @@ const isValidCreditCardNumber = (value: string) => {
   }
 
   return sum % 10 === 0;
+};
+
+export const validateEmail = (email: string): boolean => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
+
+export const generateRandomPassword = (length: number): string => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789#';
+  let password = '';
+  for (let i = 0; i < length; i++) {
+    const index = Math.floor(Math.random() * characters.length);
+    password += characters.charAt(index);
+  }
+  return password;
 };
