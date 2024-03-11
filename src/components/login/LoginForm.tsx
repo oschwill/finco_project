@@ -8,8 +8,6 @@ import ForgotPassword from './password_forgot/ForgotPassword';
 import { StaticZoomInDiv } from '@/lib/animations/animationContainer';
 
 const LoginForm: React.FC = () => {
-  const queryString = window.location.search;
-
   const [state, formAction] = useFormState(loginUser, undefined);
   const [showPasswordForgot, setShowPasswordForgot] = useState({
     isShown: false,
@@ -18,7 +16,9 @@ const LoginForm: React.FC = () => {
   });
 
   useEffect(() => {
+    const queryString = window?.location?.search;
     const query = new URLSearchParams(queryString);
+
     if (query.get('registered')) {
       setShowPasswordForgot((prevState) => ({
         ...prevState,
@@ -26,7 +26,7 @@ const LoginForm: React.FC = () => {
         message: 'Please check your email for verification',
       }));
     }
-  }, [queryString]);
+  }, []);
 
   return (
     <>
