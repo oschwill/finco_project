@@ -61,3 +61,19 @@ export const generateRandomPassword = (length: number): string => {
   }
   return password;
 };
+
+export const maskCreditCardNumber = (creditCardNumber: string) => {
+  const str = creditCardNumber.toString();
+
+  const hiddenNumbers = str
+    .slice(0, -4)
+    .replace(/./g, '*')
+    .replace(/(.{4})/g, '$1 ');
+
+  const visibleNumbers = str.slice(-4);
+
+  return {
+    hiddenNumbers,
+    visibleNumbers,
+  };
+};
