@@ -2,8 +2,9 @@
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 import { formatErrorMessage } from './functionHelper';
-import { registerAccountSchema } from './validate';
+import { addTransactionSchema, registerAccountSchema } from './validate';
 import { redirect } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 export const registerUserForm = async (previousState, formData: FormData) => {
   const formObject = Object.fromEntries(formData.entries());
@@ -104,4 +105,67 @@ export const getCookieData = async () => {
   const userData = await response.json();
 
   return JSON.parse(userData.data);
+};
+
+export const addTransaction = async (previousState, formData: FormData) => {
+  const formObject = Object.fromEntries(formData.entries());
+
+  // formObject validieren
+  const { value, error } = addTransactionSchema.validate(formObject);
+
+  if (error) {
+    return {
+      error: {
+        type: error?.details[0]?.path[0],
+        message: formatErrorMessage(error.details[0].message),
+      },
+    };
+  }
+
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, add Transaction',
+    customClass: {
+      confirmButton: 'sweet-button confirm-button-class',
+      cancelButton: 'sweet-button cancel-button-class',
+    },
+  });
+
+  if (result.isConfirmed) {
+    // Api Anfrage und Daten speichern!
+    const response = await fetch(`/api/transaction`, {
+      method: 'POST',
+      body: JSON.stringify(value),
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        title: 'Created!',
+        text: 'Your transaction has been created successfully',
+        icon: 'success',
+      });
+
+      // nach success Formdaten clearn
+      return {
+        success: {
+          type: 'success',
+        },
+      };
+    }
+
+    // Wenn ein Fehler auftritt
+    Swal.fire({
+      title: 'Error!',
+      text: 'Your transaction could not be created successfully',
+      icon: 'error',
+    });
+
+    return {
+      error: {
+        message: 'Your transaction could not be created successfully',
+      },
+    };
+  }
 };

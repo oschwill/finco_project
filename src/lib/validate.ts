@@ -9,3 +9,13 @@ export const registerAccountSchema = Joi.object({
   passwordRepeat: Joi.any().valid(Joi.ref('password')).required(),
   terms: Joi.string().valid('terms').required(),
 });
+
+export const addTransactionSchema = Joi.object({
+  transaction_type: Joi.string().valid('income', 'expense').required(),
+  user_id: Joi.number().required(),
+  amount: Joi.string()
+    .pattern(/^\d+(\.\d{1,2})?$/)
+    .required(),
+  category: Joi.string().min(3).max(30).required(),
+  date: Joi.date().iso().required(),
+});
