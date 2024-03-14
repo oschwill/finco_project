@@ -11,7 +11,7 @@ const CreditCard: React.FC<CardProps> = ({ hasValidCreditCard, creditCardNumber 
 
   return (
     <>
-      <section className="w-[90%] flex flex-col gap-[75px] mt-[50px]">
+      <section className="w-[90%] flex flex-col gap-[75px]">
         <div className='w-full h-[200px] my-0 mx-auto bg-[url("/img/home/card_background.svg")] bg-cover bg-center bg-no-repeat rounded-3xl relative'>
           <div className="relative">
             {hasValidCreditCard ? (

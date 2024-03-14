@@ -27,28 +27,6 @@
   background: rgb(24, 23, 23);
 }
 
-@media (prefers-color-scheme: dark) {
-  /* :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  } */
-}
-
-/* body {
-  color: rgb(var(--foreground-rgb));
-  /* width: 390px;
-  height: 100vh;
-  margin: 0 auto; */
-  
-  /* background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); 
-} */
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
@@ -57,4 +35,18 @@
 
 html {
   font-size: 62.5%;
+}
+
+.confirm-button-class {
+  background: linear-gradient(180deg, #44bbfe 0%, #1e78fe 100%) !important;
+}
+
+.cancel-button-class {
+  background: linear-gradient(180deg, rgb(224, 94, 94) 0%, #d33 100%) !important;
+}
+
+.sweet-button {
+  border: none !important;
+  border-radius: 10px !important;
+  font-size: 1.25rem !important;
 }
