@@ -1,33 +1,50 @@
-const BalanceIcons = (props: {
-  trendingUpTitle: string;
-  trendingUpValue: number;
-  trendingDownTitle: string;
-  trendingDownValue: number;
-}) => {
-  return (
-    <section className='balance-icons my-5'>
-      <div className='wrapper grid grid-cols-2 gap-3'>
-        <div className='flex gap-3 bg-[#f7f7f7] p-3 rounded-[36px]'>
-          <div className='flex'>
-            <img src='/img/trending-up.svg' alt='trending up icon' />
-          </div>
-          <div className='flex flex-col'>
-            <p className="'text-sm font-light">{props.trendingUpTitle}</p>
-            <p className='font-bold'>$ {props.trendingUpValue}</p>
-          </div>
-        </div>
+import { getIncomeOutcomeByUser } from '@/lib/action';
+import Image from 'next/image';
+import { Suspense } from 'react';
 
-        <div className='flex gap-3 bg-[#f7f7f7] p-3 rounded-[36px]'>
-          <div className='flex'>
-            <img src='/img/trending-down.svg' alt='trending up icon' />
+interface IconTitle {
+  trendingUpTitle: string;
+  trendingDownTitle: string;
+  userId: string;
+}
+
+const BalanceIcons: React.FC<IconTitle> = async ({
+  trendingUpTitle,
+  trendingDownTitle,
+  userId,
+}) => {
+  const financeData = await getIncomeOutcomeByUser(userId);
+
+  return (
+    <article className="balance-icons w-full">
+      {financeData ? (
+        <Suspense fallback="is Loading...">
+          <div className="wrapper grid grid-cols-2 gap-6 text-[1.25rem]">
+            <div className="flex items-center gap-3 bg-[#f7f7f7] p-3 rounded-[36px]">
+              <div className="flex">
+                <Image src="/img/trending-up.svg" alt="trending up icon" width={48} height={48} />
+              </div>
+              <div className="flex flex-col">
+                <p className="font-light">{trendingUpTitle}</p>
+                <p className="font-bold">+$ {financeData.incomeSum} </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 items-center bg-[#f7f7f7] p-3 rounded-[36px]">
+              <div className="flex">
+                <Image src="/img/trending-down.svg" alt="trending up icon" width={48} height={48} />
+              </div>
+              <div className="flex flex-col">
+                <p className="font-light">{trendingDownTitle}</p>
+                <p className="font-bold">-$ {financeData.expenseSum}</p>
+              </div>
+            </div>
           </div>
-          <div className='flex flex-col'>
-            <p className="'text-sm font-light">{props.trendingDownTitle}</p>
-            <p className='font-bold'>$ {props.trendingDownValue}</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        </Suspense>
+      ) : (
+        <p>Error handling</p>
+      )}
+    </article>
   );
 };
 
