@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(req: NextRequest) {
   const { transaction_type, user_id, amount, category, date } = await req.json();
 
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   try {
     const newTransaction = await prisma.transaction.create({
       data: {
@@ -12,6 +14,7 @@ export async function POST(req: NextRequest) {
         amount,
         category,
         date,
+        timezone,
       },
     });
 
