@@ -4,8 +4,10 @@ import { signIn, signOut } from './auth';
 import prisma from './db';
 import fs from 'fs/promises';
 import bcrypt from 'bcrypt';
-import { generateRandomPassword, validateEmail } from './functionHelper';
+import { generateRandomPassword, groupedTransactions, validateEmail } from './functionHelper';
 import { sendDynamicEmail } from './nodeMailer';
+/* DATA TYPES */
+import { IncomeOutcomeResult, GroupedTransaction } from './dataTypes';
 
 /*** LOGIN/LOGOUT START ***/
 export const loginUser = async (previousState: undefined, formData: FormData): Promise<any> => {
@@ -177,3 +179,62 @@ export const checkVerify = async (previousState: undefined, formData: FormData) 
   }
 };
 /*** VERIFY USER END ***/
+/*** TRANSACTIONS START ***/
+export const getIncomeOutcomeByUser = async (userId: string): Promise<IncomeOutcomeResult> => {
+  try {
+    // Holen uns die Summe aus alle Incomes
+    const incomeSum = await prisma.transaction.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        user_id: Number(userId),
+        transaction_type: 'income',
+      },
+    });
+
+    // Holen uns die Summe aus alle Expenses
+    const expenseSum = await prisma.transaction.aggregate({
+      _sum: {
+        amount: true,
+      },
+      where: {
+        user_id: Number(userId),
+        transaction_type: 'expense',
+      },
+    });
+
+    const result: IncomeOutcomeResult = {
+      incomeSum: Number(incomeSum._sum.amount) || 0,
+      expenseSum: Number(expenseSum._sum.amount) || 0,
+    };
+
+    return result;
+  } catch (error) {
+    return null;
+  }
+};
+
+export const getAllTransactions = async (userId: string): Promise<GroupedTransaction[]> => {
+  try {
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: Number(userId),
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    const convertedTransactions = transactions.map((item) => ({
+      ...item,
+      amount: item.amount.toNumber(),
+    }));
+    const transactionByDate = groupedTransactions(convertedTransactions);
+
+    return transactionByDate;
+  } catch (error) {
+    console.log(error);
+  }
+};
+/*** TRANSACTIONS END ***/

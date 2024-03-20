@@ -1,3 +1,6 @@
+import { Transactions, GroupedTransaction } from './dataTypes';
+/* DATA TYPES */
+
 export const formatErrorMessage = (errorMessage: string): string => {
   // Entferne Gänsefüßchen aus dem String
   let formattedMessage = errorMessage.replace(/"/g, '');
@@ -85,4 +88,61 @@ export const lockFutureDays = (): { max: string } => {
   const dateTimeAttributes = { max: `${date}T${time}` };
 
   return dateTimeAttributes;
+};
+
+export const groupedTransactions = (transactions: Transactions[]): GroupedTransaction[] => {
+  return transactions.reduce((acc, transaction) => {
+    // Datum extrahieren und als Key verwenden
+    const transactionDate = reverseString(transaction.date.toISOString().split('T')[0]);
+    const transactionDay = new Date(transaction.date).toLocaleString('en-US', { weekday: 'long' });
+
+    // Überprüfen ob für dieses Datum bereits ein Eintrag existiert
+    const existingGroup = acc.find((group) => group.headDate === transactionDate);
+
+    if (existingGroup) {
+      // Wenn ja füge die aktuelle Transaktion zu diesem Datum hinzu
+      existingGroup.data.push(transaction);
+    } else {
+      // Wenn nein erstelle einen neuen Eintrag für dieses Datum
+      acc.push({
+        headDay: transactionDay,
+        headDate: transactionDate,
+        data: [transaction],
+      });
+    }
+
+    return acc;
+  }, []);
+};
+
+const reverseString = (str: string): string => {
+  const reversedDateArray = str.split('-').reverse();
+
+  const reversedDate = reversedDateArray.join('-');
+
+  return reversedDate;
+};
+
+export const formatCustomDate = (date: Date, timeZone: string): string => {
+  const dateFormat = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    day: '2-digit',
+    month: 'short', // ShortForm des Monats, June => jun
+    year: 'numeric',
+  });
+
+  const timeFormat = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h12',
+  });
+
+  // Formatieren des Datums und der Uhrzeit getrennt
+  const formattedDate = dateFormat.format(date);
+  const formattedTime = timeFormat.format(date);
+
+  const result = `${formattedTime}, ${formattedDate}`;
+
+  return result;
 };
