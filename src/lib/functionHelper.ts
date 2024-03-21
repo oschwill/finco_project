@@ -97,7 +97,9 @@ export const groupedTransactions = (transactions: Transactions[]): GroupedTransa
     const transactionDay = new Date(transaction.date).toLocaleString('en-US', { weekday: 'long' });
 
     // Überprüfen ob für dieses Datum bereits ein Eintrag existiert
-    const existingGroup = acc.find((group) => group.headDate === transactionDate);
+    const existingGroup = acc.find(
+      (group: GroupedTransaction) => group.headLine === transactionDate
+    );
 
     if (existingGroup) {
       // Wenn ja füge die aktuelle Transaktion zu diesem Datum hinzu
@@ -106,7 +108,7 @@ export const groupedTransactions = (transactions: Transactions[]): GroupedTransa
       // Wenn nein erstelle einen neuen Eintrag für dieses Datum
       acc.push({
         headDay: transactionDay,
-        headDate: transactionDate,
+        headLine: transactionDate,
         data: [transaction],
       });
     }
