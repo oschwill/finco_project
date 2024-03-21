@@ -1,19 +1,26 @@
+'use client';
+
 import { getIncomeOutcomeByUser } from '@/lib/action';
 import Image from 'next/image';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 
 interface IconTitle {
   trendingUpTitle: string;
   trendingDownTitle: string;
-  userId: string;
+  userId: number;
 }
 
-const BalanceIcons: React.FC<IconTitle> = async ({
-  trendingUpTitle,
-  trendingDownTitle,
-  userId,
-}) => {
-  const financeData = await getIncomeOutcomeByUser(userId);
+const BalanceIcons: React.FC<IconTitle> = ({ trendingUpTitle, trendingDownTitle, userId }) => {
+  const [financeData, setFinanceData] = useState(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      const transactionData = await getIncomeOutcomeByUser(userId);
+
+      setFinanceData(transactionData);
+    };
+
+    fetchData();
+  }, [userId]);
 
   return (
     <article className="balance-icons w-full">

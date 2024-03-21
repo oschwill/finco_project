@@ -10,12 +10,21 @@ export interface Transactions {
 }
 
 export interface GroupedTransaction {
-  headDay: string;
-  headDate: string;
+  headDay?: string;
+  headLine: string;
+  data: Transactions[];
+}
+
+export interface SearchedTransaction {
+  headLine: string;
   data: Transactions[];
 }
 
 export interface IncomeOutcomeResult {
   incomeSum: number;
   expenseSum: number;
+}
+
+export interface UserCredentials {
+  userId?: number;
 }

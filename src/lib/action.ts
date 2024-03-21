@@ -7,7 +7,7 @@ import bcrypt from 'bcrypt';
 import { generateRandomPassword, groupedTransactions, validateEmail } from './functionHelper';
 import { sendDynamicEmail } from './nodeMailer';
 /* DATA TYPES */
-import { IncomeOutcomeResult, GroupedTransaction } from './dataTypes';
+import { IncomeOutcomeResult, GroupedTransaction, SearchedTransaction } from './dataTypes';
 
 /*** LOGIN/LOGOUT START ***/
 export const loginUser = async (previousState: undefined, formData: FormData): Promise<any> => {
@@ -180,7 +180,7 @@ export const checkVerify = async (previousState: undefined, formData: FormData) 
 };
 /*** VERIFY USER END ***/
 /*** TRANSACTIONS START ***/
-export const getIncomeOutcomeByUser = async (userId: string): Promise<IncomeOutcomeResult> => {
+export const getIncomeOutcomeByUser = async (userId: number): Promise<IncomeOutcomeResult> => {
   try {
     // Holen uns die Summe aus alle Incomes
     const incomeSum = await prisma.transaction.aggregate({
@@ -215,11 +215,11 @@ export const getIncomeOutcomeByUser = async (userId: string): Promise<IncomeOutc
   }
 };
 
-export const getAllTransactions = async (userId: string): Promise<GroupedTransaction[]> => {
+export const getAllTransactions = async (userId: number): Promise<GroupedTransaction[]> => {
   try {
     const transactions = await prisma.transaction.findMany({
       where: {
-        user_id: Number(userId),
+        user_id: userId,
       },
       orderBy: {
         date: 'desc',
@@ -233,6 +233,45 @@ export const getAllTransactions = async (userId: string): Promise<GroupedTransac
     const transactionByDate = groupedTransactions(convertedTransactions);
 
     return transactionByDate;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const searchTransactionByValue = async (
+  userId: number,
+  input?: string,
+  date?: string
+): Promise<GroupedTransaction[]> => {
+  try {
+    if (input) {
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          user_id: userId,
+          category: {
+            contains: input,
+          },
+        },
+      });
+
+      const convertedTransactions = transactions.map((item) => ({
+        ...item,
+        amount: item.amount.toNumber(),
+      }));
+
+      return [{ headDay: null, headLine: input, data: convertedTransactions }];
+    }
+
+    if (date) {
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          user_id: userId,
+        },
+        orderBy: {
+          date: 'desc',
+        },
+      });
+    }
   } catch (error) {
     console.log(error);
   }
