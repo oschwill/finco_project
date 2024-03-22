@@ -1,11 +1,28 @@
+import { forwardRef } from 'react';
 import Calendar from '../icons/Calendar';
 import SearchGlass from '../icons/SearchGlass';
+import DatePicker from 'react-datepicker';
+import { CalendarButtonProps } from '@/lib/dataTypes';
+
+/* CSS */
+import 'react-datepicker/dist/react-datepicker.css';
+import './SearchTransaction.css';
 
 interface SearchFunction {
-  handleInputSearch: (input: string) => void;
+  handleInputSearch: (input: string, date?: Date) => void;
 }
 
 const SearchTransaction: React.FC<SearchFunction> = ({ handleInputSearch }) => {
+  const CalendarButton = forwardRef<HTMLButtonElement, CalendarButtonProps>(
+    ({ onClick, ...rest }, ref) => (
+      <button onClick={onClick} ref={ref} {...rest}>
+        <Calendar />
+      </button>
+    )
+  );
+
+  CalendarButton.displayName = 'CalendarButton';
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -33,7 +50,11 @@ const SearchTransaction: React.FC<SearchFunction> = ({ handleInputSearch }) => {
         </div>
       </form>
       <div className="bg-inputBackColor rounded-full p-4">
-        <Calendar />
+        <DatePicker
+          onChange={(date: Date) => handleInputSearch(null, date)}
+          customInput={<CalendarButton />}
+          maxDate={new Date()}
+        />
       </div>
     </div>
   );
