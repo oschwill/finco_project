@@ -1,13 +1,13 @@
 import BalanceIcons from '@/components/balanceIcons/balanceIcons';
-import Header from '@/components/header/header';
+import Header from '@/components/header/Header';
 import NavBar from '@/components/navbar/navbar';
 
 const Reports = () => {
   return (
     <>
       <Header />
-      <main className='reports mx-6'>
-        <h1 className='text-[28px] font-bold mb-1'>Report</h1>
+      <main className="reports mx-6">
+        <h1 className="text-[28px] font-bold mb-1">Report</h1>
         <BalanceIcons
           trendingUpTitle={'Beginning'}
           trendingUpValue={5000}

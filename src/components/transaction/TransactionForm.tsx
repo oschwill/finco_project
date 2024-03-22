@@ -53,7 +53,7 @@ const TransactionForm: React.FC<Transaction> = ({ transactionType, text, userId 
   };
 
   return (
-    <section className="w-[90%]">
+    <section className="w-[90%] mb-[100px]">
       <article>
         <form ref={formRef} className="mb-8 flex flex-col gap-8" action={formAction}>
           <input type="hidden" name="transaction_type" value={transactionType} />

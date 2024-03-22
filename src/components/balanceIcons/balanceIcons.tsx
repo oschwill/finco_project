@@ -3,20 +3,19 @@
 import { getIncomeOutcomeByUser } from '@/lib/action';
 import Image from 'next/image';
 import { Suspense, useEffect, useState } from 'react';
-
-interface IconTitle {
-  trendingUpTitle: string;
-  trendingDownTitle: string;
-  userId: number;
-}
+import { IconTitle } from '@/lib/dataTypes';
+import Loading from '../icons/Loading';
 
 const BalanceIcons: React.FC<IconTitle> = ({ trendingUpTitle, trendingDownTitle, userId }) => {
   const [financeData, setFinanceData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
       const transactionData = await getIncomeOutcomeByUser(userId);
 
       setFinanceData(transactionData);
+      setIsLoading(false);
     };
 
     fetchData();
@@ -24,7 +23,7 @@ const BalanceIcons: React.FC<IconTitle> = ({ trendingUpTitle, trendingDownTitle,
 
   return (
     <article className="balance-icons w-full">
-      {financeData ? (
+      {!isLoading && financeData ? (
         <Suspense fallback="is Loading...">
           <div className="wrapper grid grid-cols-2 gap-6 text-[1.25rem]">
             <div className="flex items-center gap-3 bg-[#f7f7f7] p-3 rounded-[36px]">
@@ -49,7 +48,9 @@ const BalanceIcons: React.FC<IconTitle> = ({ trendingUpTitle, trendingDownTitle,
           </div>
         </Suspense>
       ) : (
-        <p>Error handling</p>
+        <div className="text-center">
+          <p>Is Loading...</p>
+        </div>
       )}
     </article>
   );
