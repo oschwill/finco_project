@@ -11,7 +11,7 @@ const TransactionSection: React.FC<GroupedTransaction> = ({ headDay, headLine, d
       </div>
       <div className="flex flex-col gap-6">
         <Suspense fallback="is Loading...">
-          {data &&
+          {data && data.length > 0 ? (
             data.map((item) => (
               <TransactionItem
                 key={item.id}
@@ -21,7 +21,10 @@ const TransactionSection: React.FC<GroupedTransaction> = ({ headDay, headLine, d
                 date={item.date}
                 timezone={item.timezone}
               />
-            ))}
+            ))
+          ) : (
+            <p className="text-center text-[1.25rem]">No Data vailable</p>
+          )}
         </Suspense>
       </div>
     </article>

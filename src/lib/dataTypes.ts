@@ -28,3 +28,9 @@ export interface IncomeOutcomeResult {
 export interface UserCredentials {
   userId?: number;
 }
+
+export interface CalendarButtonProps {
+  value?: string;
+  onClick: () => void;
+  [key: string]: any;
+}
