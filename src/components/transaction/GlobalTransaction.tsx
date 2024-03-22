@@ -10,9 +10,11 @@ import Loading from '../icons/Loading';
 
 const GlobalTransaction: React.FC<UserCredentials> = ({ userId }) => {
   const [transactionData, setTransactionData] = useState(null);
+  const [searchDate, setSearchDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchAllTransactions = async () => {
+    setIsLoading(true);
     const transactionData = await getAllTransactions(userId);
 
     setTransactionData(transactionData);
@@ -27,13 +29,14 @@ const GlobalTransaction: React.FC<UserCredentials> = ({ userId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, transactionData]);
 
-  const handleInputSearch = async (input: string) => {
-    if (!input) {
+  const handleInputSearch = async (input: string, date: Date = null) => {
+    if (!input && !date) {
       return;
     }
+
     setIsLoading(true);
 
-    const searchData = await searchTransactionByValue(userId, input, null);
+    const searchData = await searchTransactionByValue(userId, input, date);
     setTransactionData(searchData);
     setIsLoading(false);
   };

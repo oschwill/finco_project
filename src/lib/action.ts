@@ -4,7 +4,12 @@ import { signIn, signOut } from './auth';
 import prisma from './db';
 import fs from 'fs/promises';
 import bcrypt from 'bcrypt';
-import { generateRandomPassword, groupedTransactions, validateEmail } from './functionHelper';
+import {
+  addLeadingZero,
+  generateRandomPassword,
+  groupedTransactions,
+  validateEmail,
+} from './functionHelper';
 import { sendDynamicEmail } from './nodeMailer';
 /* DATA TYPES */
 import { IncomeOutcomeResult, GroupedTransaction, SearchedTransaction } from './dataTypes';
@@ -241,7 +246,7 @@ export const getAllTransactions = async (userId: number): Promise<GroupedTransac
 export const searchTransactionByValue = async (
   userId: number,
   input?: string,
-  date?: string
+  date?: Date
 ): Promise<GroupedTransaction[]> => {
   try {
     if (input) {
@@ -263,14 +268,33 @@ export const searchTransactionByValue = async (
     }
 
     if (date) {
+      // Wir splitten das Date zunächst einmal auf
+      const year = date.getUTCFullYear();
+      const month = date.getUTCMonth();
+      const day = date.getDate();
+
+      // Wir erzeugen StartDate und EndDate
+      const startDate = new Date(Date.UTC(year, month, day, 0, 0, 0));
+      const endDate = new Date(Date.UTC(year, month, day + 1, 0, 0, 0));
+
       const transactions = await prisma.transaction.findMany({
         where: {
           user_id: userId,
-        },
-        orderBy: {
-          date: 'desc',
+          date: {
+            gte: startDate,
+            lt: endDate,
+          },
         },
       });
+
+      const convertedTransactions = transactions.map((item) => ({
+        ...item,
+        amount: item.amount.toNumber(),
+      }));
+
+      const outputDate = `${year}/${addLeadingZero(month)}/${addLeadingZero(day)}`;
+
+      return [{ headDay: null, headLine: outputDate, data: convertedTransactions }];
     }
   } catch (error) {
     console.log(error);
