@@ -11,6 +11,7 @@ export const authConfig = {
       if (user) {
         token.id = user.id;
         token.credit_card = user.credit_card;
+        token.image_profile_path = user.image_profile_path;
         // evnetuell noch weitere Parameter für admin roles etc...
       }
 
@@ -20,6 +21,7 @@ export const authConfig = {
       if (token) {
         session.user.id = token.id;
         session.user.credit_card = token.credit_card;
+        session.user.image_profile_path = token.image_profile_path;
       }
       return session;
     },

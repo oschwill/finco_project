@@ -34,3 +34,9 @@ export interface CalendarButtonProps {
   onClick: () => void;
   [key: string]: any;
 }
+
+export interface IconTitle {
+  trendingUpTitle: string;
+  trendingDownTitle: string;
+  userId: number;
+}
