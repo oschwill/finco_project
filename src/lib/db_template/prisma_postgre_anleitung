@@ -21,7 +21,7 @@ CREATE FUNCTION public.update_user_balance() RETURNS trigger
 BEGIN
   -- Berechne das neue Gesamtkapital für den Benutzer der von der Transaktion betroffen ist
     UPDATE users
-    SET total_capital = (
+    SET total_capital = start_capital + (
         SELECT SUM(
             CASE
                 WHEN transaction_type = 'income' THEN amount
