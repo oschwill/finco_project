@@ -1,7 +1,7 @@
 'use client';
 
 import { UserCredentials } from '@/lib/dataTypes';
-import BalanceIcons from '../balanceIcons/balanceIcons';
+import BalanceIcons from '../trendingIcons/BalanceIcons';
 import SearchTransaction from './SearchTransaction';
 import TransactionOutput from './TransactionOutput';
 import { useEffect, useState } from 'react';
@@ -54,7 +54,12 @@ const GlobalTransaction: React.FC<UserCredentials> = ({ userId }) => {
         </article>
       </section>
       <section className="w-[90%] flex my-5">
-        <BalanceIcons trendingUpTitle="Income" trendingDownTitle="Expense" userId={userId} />
+        <BalanceIcons
+          trendingUpTitle="Income"
+          trendingDownTitle="Expense"
+          userId={userId}
+          category="finance"
+        />
       </section>
       {!isLoading ? (
         <TransactionOutput transactionData={transactionData} />
