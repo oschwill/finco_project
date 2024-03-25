@@ -25,6 +25,11 @@ export interface IncomeOutcomeResult {
   expenseSum: number;
 }
 
+export interface StartCurrentCapitalResult {
+  startCapital: number;
+  currentCapital: number;
+}
+
 export interface UserCredentials {
   userId?: number;
 }
@@ -39,4 +44,21 @@ export interface IconTitle {
   trendingUpTitle: string;
   trendingDownTitle: string;
   userId: number;
+  category: string;
+}
+
+export interface TrendingValues {
+  image: string;
+  trendingUpTitle: string;
+  value: string;
+}
+
+export interface TransactionStatistic {
+  totalTransactions?: number;
+  incomeTransactions?: number;
+  expenseTransactions?: number;
+  firstTransactionDate?: Date | null;
+  lastTransactionDate?: Date | null;
+  timeZone?: string | null;
+  transValues: IncomeOutcomeResult;
 }

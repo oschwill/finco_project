@@ -12,7 +12,12 @@ import {
 } from './functionHelper';
 import { sendDynamicEmail } from './nodeMailer';
 /* DATA TYPES */
-import { IncomeOutcomeResult, GroupedTransaction, SearchedTransaction } from './dataTypes';
+import {
+  IncomeOutcomeResult,
+  GroupedTransaction,
+  StartCurrentCapitalResult,
+  TransactionStatistic,
+} from './dataTypes';
 
 /*** LOGIN/LOGOUT START ***/
 export const loginUser = async (previousState: undefined, formData: FormData): Promise<any> => {
@@ -220,6 +225,32 @@ export const getIncomeOutcomeByUser = async (userId: number): Promise<IncomeOutc
   }
 };
 
+export const getStartCurrentCapitalByUser = async (
+  userId: number
+): Promise<StartCurrentCapitalResult> => {
+  try {
+    // Holen uns die Summe aus alle Incomes
+    const capitalData = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        start_capital: true,
+        total_capital: true,
+      },
+    });
+
+    const result: StartCurrentCapitalResult = {
+      startCapital: Number(capitalData.start_capital) || 0,
+      currentCapital: Number(capitalData.total_capital) || 0,
+    };
+
+    return result;
+  } catch (error) {
+    return null;
+  }
+};
+
 export const getAllTransactions = async (userId: number): Promise<GroupedTransaction[]> => {
   try {
     const transactions = await prisma.transaction.findMany({
@@ -301,6 +332,71 @@ export const searchTransactionByValue = async (
   }
 };
 /*** TRANSACTIONS END ***/
+/*** REPORTS START ***/
+export const getReportStatistics = async (userId: number): Promise<TransactionStatistic> => {
+  try {
+    // Anzahl aller Transaktionen
+    const totalTransactions = await prisma.transaction.count({
+      where: { user_id: userId },
+    });
+
+    // Anzahl aller income Transaktionen
+    const incomeTransactions = await prisma.transaction.count({
+      where: {
+        user_id: userId,
+        transaction_type: 'income',
+      },
+    });
+
+    // Anzahl aller expense Transaktionen
+    const expenseTransactions = await prisma.transaction.count({
+      where: {
+        user_id: userId,
+        transaction_type: 'expense',
+      },
+    });
+
+    // Datum der ersten Transaktion
+    const firstTransactionDate = await prisma.transaction.findFirst({
+      where: { user_id: userId },
+      orderBy: { date: 'asc' },
+      select: { date: true },
+    });
+
+    // Datum der letzten Transaktion
+    const lastTransactionDate = await prisma.transaction.findFirst({
+      where: { user_id: userId },
+      orderBy: { date: 'desc' },
+      select: { date: true },
+    });
+
+    // aktuelle Zeitzone
+    const timeZone = await prisma.transaction.findFirst({
+      where: { user_id: userId },
+      select: { timezone: true },
+    });
+
+    // expense und income Wert holen
+    const transValues = await getIncomeOutcomeByUser(userId);
+
+    console.log(firstTransactionDate.date);
+
+    const result: TransactionStatistic = {
+      totalTransactions: totalTransactions || 0,
+      incomeTransactions: incomeTransactions || 0,
+      expenseTransactions: expenseTransactions || 0,
+      firstTransactionDate: firstTransactionDate ? firstTransactionDate.date : null,
+      lastTransactionDate: lastTransactionDate ? lastTransactionDate.date : null,
+      timeZone: timeZone ? timeZone.timezone : null,
+      transValues: transValues,
+    };
+
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+/*** REPORTS END ***/
 
 /*** USER START ***/
 /*** USER END ***/
