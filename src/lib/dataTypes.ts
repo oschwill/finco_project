@@ -3,10 +3,15 @@ export interface Transactions {
   id?: number;
   user_id?: number;
   transaction_type: string;
-  amount: number;
-  category: string;
-  date: Date;
-  timezone: string;
+  amount?: number;
+  category?: string;
+  date?: Date;
+  timezone?: string;
+}
+
+export interface CharDataPoint {
+  date: string;
+  value: number;
 }
 
 export interface GroupedTransaction {
