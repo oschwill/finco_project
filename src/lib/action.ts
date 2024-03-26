@@ -17,6 +17,7 @@ import {
   GroupedTransaction,
   StartCurrentCapitalResult,
   TransactionStatistic,
+  CharDataPoint,
 } from './dataTypes';
 
 /*** LOGIN/LOGOUT START ***/
@@ -379,8 +380,6 @@ export const getReportStatistics = async (userId: number): Promise<TransactionSt
     // expense und income Wert holen
     const transValues = await getIncomeOutcomeByUser(userId);
 
-    console.log(firstTransactionDate.date);
-
     const result: TransactionStatistic = {
       totalTransactions: totalTransactions || 0,
       incomeTransactions: incomeTransactions || 0,
@@ -392,6 +391,58 @@ export const getReportStatistics = async (userId: number): Promise<TransactionSt
     };
 
     return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getReportChartData = async (userId: number): Promise<CharDataPoint[]> => {
+  try {
+    // Holen uns das Startkapital
+    const { start_capital } = await prisma.user.findFirst({
+      where: {
+        id: userId,
+      },
+      select: {
+        start_capital: true,
+      },
+    });
+
+    // Holen uns alle Incomes und Expenses
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: userId,
+      },
+      select: {
+        transaction_type: true,
+        amount: true,
+        date: true,
+      },
+      orderBy: {
+        date: 'asc',
+      },
+    });
+
+    // Errechnen nun die Zwischensummen
+    let runningTotal = Number(start_capital);
+    const summarizedData: CharDataPoint[] = [];
+
+    transactions.forEach((transaction) => {
+      // Datum konvertieren 01/01/2024
+      const formattedDate = transaction.date.toISOString().split('T')[0];
+
+      // Summe aktualisieren
+      if (transaction.transaction_type === 'income') {
+        runningTotal += Number(transaction.amount);
+      } else if (transaction.transaction_type === 'expense') {
+        runningTotal -= Number(transaction.amount);
+      }
+
+      // Zwischensumme für das aktuelle Datum speichern
+      summarizedData.push({ date: formattedDate, value: runningTotal });
+    });
+
+    return summarizedData;
   } catch (error) {
     console.log(error);
   }

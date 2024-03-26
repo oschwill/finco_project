@@ -1,5 +1,9 @@
-import { Transactions, GroupedTransaction } from './dataTypes';
+import { MutableRefObject } from 'react';
+import Chart, { ChartConfiguration } from 'chart.js/auto';
+
 /* DATA TYPES */
+import { Transactions, GroupedTransaction } from './dataTypes';
+import { getReportChartData } from './action';
 
 export const formatErrorMessage = (errorMessage: string): string => {
   // Entferne Gänsefüßchen aus dem String
@@ -151,4 +155,58 @@ export const formatCustomDate = (date: Date, timeZone: string): string => {
 
 export const addLeadingZero = (number: number): string => {
   return number < 10 ? `0${number}` : `${number}`;
+};
+
+/* CHART FUNCTION */
+export const buildChart = async (
+  chartRef: MutableRefObject<Chart | null>,
+  userId: number,
+  chartType: string
+) => {
+  const data = await getReportChartData(userId);
+
+  const ctx = document.getElementById('myChart') as HTMLCanvasElement;
+
+  if (chartRef.current) {
+    chartRef.current.destroy();
+  }
+
+  const configBar: ChartConfiguration = {
+    type: chartType as 'bar' | 'line' | 'radar',
+    data: {
+      labels: data.map((row) => row.date),
+      datasets: [
+        {
+          label: 'All Transactions',
+          data: data.map((row) => row.value),
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        zoom: {
+          pan: {
+            enabled: true,
+            mode: 'x',
+          },
+          zoom: {
+            wheel: {
+              enabled: true,
+            },
+            pinch: {
+              enabled: true,
+            },
+            mode: 'x',
+          },
+        },
+      },
+    },
+  };
+
+  chartRef.current = new Chart(ctx, configBar);
 };

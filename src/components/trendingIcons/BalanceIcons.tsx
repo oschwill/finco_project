@@ -1,7 +1,6 @@
 'use client';
 
 import { getIncomeOutcomeByUser, getStartCurrentCapitalByUser } from '@/lib/action';
-import Image from 'next/image';
 import { Suspense, useEffect, useState } from 'react';
 import { IconTitle, IncomeOutcomeResult, StartCurrentCapitalResult } from '@/lib/dataTypes';
 import Loading from '../icons/Loading';

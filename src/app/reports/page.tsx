@@ -1,5 +1,6 @@
 import Header from '@/components/header/Header';
 import NavBar from '@/components/navbar/navbar';
+import ReportChart from '@/components/report/ReportChart';
 import TransactionStatistic from '@/components/transaction/TransactionStatistic';
 import BalanceIcons from '@/components/trendingIcons/BalanceIcons';
 import { auth } from '@/lib/auth';
@@ -11,7 +12,7 @@ const Reports = async () => {
   return (
     <>
       <Header />
-      <main className="flex flex-col items-center gap-6">
+      <main className="flex flex-col items-center gap-12 mb-[150px]">
         <section className="w-[90%] flex flex-col gap-4">
           <h1 className="text-[28px] font-bold mb-1">Report</h1>
 
@@ -23,7 +24,7 @@ const Reports = async () => {
           />
         </section>
         <section className="w-[90%] flex flex-col gap-4">
-          <div>CHART</div>
+          <ReportChart userId={userId} />
         </section>
         <section className="w-[90%] flex flex-col gap-4">
           <h2 className="text-[2rem] font-bold">Transactions Statistic</h2>
