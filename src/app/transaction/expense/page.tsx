@@ -1,5 +1,5 @@
 import Header from '@/components/header/Header';
-import CreditCard from '@/components/home/creditCard';
+import CreditCard from '@/components/home/CreditCard';
 import NavBar from '@/components/navbar/navbar';
 import TransactionForm from '@/components/transaction/TransactionForm';
 import { auth } from '@/lib/auth';

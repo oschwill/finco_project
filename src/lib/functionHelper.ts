@@ -31,7 +31,7 @@ export const checkCookieIfExists = (cookieName: string): boolean => {
 };
 
 /* KREDIT KARTE CHECKEN  */
-const isValidCreditCardNumber = (value: string): boolean => {
+export const isValidCreditCardNumber = (value: string): boolean => {
   const num = value.replace(/\D/g, '');
 
   let sum = 0;
@@ -51,7 +51,14 @@ const isValidCreditCardNumber = (value: string): boolean => {
     shouldDouble = !shouldDouble;
   }
 
+  console.log(sum % 10 === 0);
+
   return sum % 10 === 0;
+};
+
+/* Temporäres Kredit Karten Checken */
+export const isValidSixteenDigitNumber = (input: string): boolean => {
+  return /^\d{16}$/.test(input);
 };
 
 export const validateEmail = (email: string): boolean => {
@@ -70,6 +77,10 @@ export const generateRandomPassword = (length: number): string => {
 };
 
 export const maskCreditCardNumber = (creditCardNumber: string) => {
+  if (!creditCardNumber) {
+    return { hiddenNumbers: null, visibleNumbers: null };
+  }
+
   const str = creditCardNumber.toString();
 
   const hiddenNumbers = str

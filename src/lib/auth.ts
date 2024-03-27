@@ -93,6 +93,7 @@ export const {
           } else {
             // Hängen wir die Creditcard Information an die session an / Später vielleicht noch mehr
             (user as any).credit_card = userData.credit_card as string;
+            (user as any).id = userData.id as number;
           }
         } catch (error) {
           console.log(error);
