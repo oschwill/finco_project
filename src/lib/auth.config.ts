@@ -51,6 +51,9 @@ export const authConfig = {
 
       // wenn eingeloggt dann leiten wir auf die hauptseite um /home
       if ((isOnLoginPage && user) || (isOnSetUpAccountPage && user) || (isOnRegisterPage && user)) {
+        if (!user.credit_card) {
+          return Response.redirect(new URL('/home?credit_card=false', request.nextUrl));
+        }
         return Response.redirect(new URL('/home', request.nextUrl));
       }
 

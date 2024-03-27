@@ -1,1 +1,1 @@
-
+- Wenn keine Transaction Daten vorhanden sind, schmeißt die Report Seite einen Error

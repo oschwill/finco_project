@@ -48,13 +48,13 @@ const TransactionStatistic: React.FC<{ userId: number }> = ({ userId }) => {
           <div>
             First Trans:{' '}
             <span className="font-bold">
-              {statistic?.firstTransactionDate.toLocaleDateString().toString()}
+              {statistic?.firstTransactionDate?.toLocaleDateString()?.toString()}
             </span>
           </div>
           <div>
             Last Trans:{' '}
             <span className="font-bold">
-              {statistic?.lastTransactionDate.toLocaleDateString().toString()}
+              {statistic?.lastTransactionDate?.toLocaleDateString()?.toString()}
             </span>
           </div>
           <div>

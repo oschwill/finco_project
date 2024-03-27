@@ -28,6 +28,7 @@ const config: Config = {
         uploadButtonGradientTo: '#FF9900',
         linkColor: '#1E78FE',
         transparentBGColor: '#14131375',
+        transparentBGColorSec: '#14131390',
         headLineColorPrimary: '#298BFF',
         headLineColorSecondary: '#FFAA1A',
       },

@@ -1,4 +1,4 @@
-import CreditCard from '@/components/home/creditCard';
+import CreditCard from '@/components/home/CreditCard';
 import Wallet from '@/components/wallet/wallet';
 import NavBar from '@/components/navbar/navbar';
 import { auth } from '@/lib/auth';
@@ -17,10 +17,16 @@ const Home = async () => {
         <CreditCard
           hasValidCreditCard={hasValidCreditCard ? true : false}
           creditCardNumber={creditCardNumber}
+          userId={userId}
         />
-        <Wallet trendingUpTitle="Income" trendingDownTitle="Expense" userId={userId} />
+        <Wallet
+          trendingUpTitle="Income"
+          trendingDownTitle="Expense"
+          userId={userId}
+          category="finance"
+        />
       </main>
-      <NavBar />
+      {hasValidCreditCard && <NavBar />}
     </>
   );
 };

@@ -5,6 +5,7 @@ import { formatErrorMessage } from './functionHelper';
 import { addTransactionSchema, registerAccountSchema } from './validate';
 import { redirect } from 'next/navigation';
 import Swal from 'sweetalert2';
+import { handleGithubLogin } from './action';
 
 export const registerUserForm = async (previousState, formData: FormData) => {
   const formObject = Object.fromEntries(formData.entries());
@@ -167,5 +168,31 @@ export const addTransaction = async (previousState, formData: FormData) => {
         message: 'Your transaction could not be created successfully',
       },
     };
+  }
+};
+
+export const changeCreditCardNumber = async (
+  creditCardNumber: string,
+  userId: number,
+  setError: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  if (creditCardNumber) {
+    const data = {
+      userId: userId,
+      creditCardNumber: creditCardNumber,
+    };
+
+    const response = await fetch(`/api/register`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      // Neu einloggen
+      handleGithubLogin();
+      return;
+    }
+
+    setError(true);
   }
 };

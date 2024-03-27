@@ -1,17 +1,21 @@
+'use client';
+
 import { maskCreditCardNumber } from '@/lib/functionHelper';
 import Image from 'next/image';
+import NoCreditCardMessage from './NoCreditCardMessage';
 
 interface CardProps {
   hasValidCreditCard: boolean;
   creditCardNumber?: string;
+  userId: number;
 }
 
-const CreditCard: React.FC<CardProps> = ({ hasValidCreditCard, creditCardNumber }) => {
+const CreditCard: React.FC<CardProps> = ({ hasValidCreditCard, creditCardNumber, userId }) => {
   const { hiddenNumbers, visibleNumbers } = maskCreditCardNumber(creditCardNumber);
 
   return (
     <>
-      <section className="w-[90%] flex flex-col gap-[75px]">
+      <section className="w-[90%] flex flex-col gap-[75px] relative">
         <div className='w-full h-[200px] my-0 mx-auto bg-[url("/img/home/card_background.svg")] bg-cover bg-center bg-no-repeat rounded-3xl relative'>
           <div className="relative">
             {hasValidCreditCard ? (
@@ -43,6 +47,7 @@ const CreditCard: React.FC<CardProps> = ({ hasValidCreditCard, creditCardNumber 
             <p className="pr-5 pt-10  text-white text-[1.25rem]">09/25</p>
           </div>
         </div>
+        {!hasValidCreditCard && <NoCreditCardMessage userId={userId} />}
       </section>
     </>
   );

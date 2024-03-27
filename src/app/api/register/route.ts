@@ -75,3 +75,29 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false }, { status: 400 });
   }
 }
+
+export async function PATCH(req: NextRequest) {
+  const { userId, creditCardNumber } = await req.json();
+
+  console.log(userId);
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        credit_card: creditCardNumber,
+      },
+    });
+
+    if (updatedUser) {
+      return NextResponse.json({ success: true }, { status: 201 });
+    }
+
+    throw new Error();
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ success: false }, { status: 400 });
+  }
+}
