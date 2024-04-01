@@ -1,11 +1,13 @@
 import { auth } from '@/lib/auth';
 import Image from 'next/image';
 import Link from 'next/link';
+import ProfileSettings from './ProfileSettings';
 
 const Header: React.FC = async () => {
   const { user } = await auth();
   const profileImage = (user as any).image_profile_path;
   const userName = (user as any).name;
+  const email = (user as any).email;
 
   return (
     <header className="flex flex-col items-center mb-12 mt-16">
@@ -20,15 +22,7 @@ const Header: React.FC = async () => {
             Logged in as <span className="font-bold">{userName}</span>
           </p>
         </article>
-        <article>
-          <Image
-            src={`${profileImage ? profileImage : '/images/test_pic.jpg'}`}
-            width={50}
-            height={50}
-            alt="Logo"
-            className="rounded-full"
-          />
-        </article>
+        <ProfileSettings profileImage={profileImage} userName={userName} email={email} />
       </section>
     </header>
   );
