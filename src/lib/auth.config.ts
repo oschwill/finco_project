@@ -12,6 +12,7 @@ export const authConfig = {
         token.id = user.id;
         token.credit_card = user.credit_card;
         token.image_profile_path = user.image_profile_path;
+        token.account_type = user.account_type;
         // evnetuell noch weitere Parameter für admin roles etc...
       }
 
@@ -22,6 +23,7 @@ export const authConfig = {
         session.user.id = token.id;
         session.user.credit_card = token.credit_card;
         session.user.image_profile_path = token.image_profile_path;
+        session.user.account_type = token.account_type;
       }
       return session;
     },

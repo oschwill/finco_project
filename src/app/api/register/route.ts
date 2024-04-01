@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
         image_profile_id: (userData.get('publicId') as string) || null,
         image_profile_path: (userData.get('profilePath') as string) || null,
         register_token: token,
+        account_type: 'finco',
       },
     });
 

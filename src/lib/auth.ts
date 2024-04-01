@@ -83,17 +83,28 @@ export const {
 
           // Wenn der User nicht existiert legen wir den User mit den von Github mitgelieferten Daten an
           if (!userData) {
-            await prisma.user.create({
+            const userData = await prisma.user.create({
               data: {
                 name: profile.name as string,
                 email: profile.email as string,
                 image_profile_path: profile.avatar_url as string,
+                account_type:
+                  account.provider === 'github'
+                    ? 'github'
+                    : account.provider === 'google'
+                    ? 'google'
+                    : 'finco',
               },
             });
+
+            (user as any).credit_card = userData.credit_card as string;
+            (user as any).id = userData.id as number;
+            (user as any).account_type = userData.account_type as string;
           } else {
             // Hängen wir die Creditcard Information an die session an / Später vielleicht noch mehr
             (user as any).credit_card = userData.credit_card as string;
             (user as any).id = userData.id as number;
+            (user as any).account_type = userData.account_type as string;
           }
         } catch (error) {
           console.log(error);

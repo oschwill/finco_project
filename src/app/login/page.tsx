@@ -4,13 +4,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoginForm from '@/components/login/LoginForm';
 import Link from 'next/link';
 import { handleGithubLogin, handleGoogleLogin } from '@/lib/action';
+import Image from 'next/image';
 
 const Login = () => {
   return (
     <main className="flex flex-col items-center">
-      <section className="w-[90%] flex flex-col gap-[75px]">
-        <article className="flex flex-col gap-6">
-          <h1 className="text-[3rem] font-bold text-center">Welcome back</h1>
+      <section className="w-[90%] flex flex-col gap-[75px] mt-8">
+        <article className="flex flex-col gap-8">
+          <div className="flex justify-center items-center">
+            <Image src="/img/Logo.svg" alt="Logo" width={50} height={50} />
+            <h1 className="text-[3rem] font-bold text-center">Welcome back</h1>
+          </div>
           <p className="text-[1.5rem] text-center">
             Lorem ipsum dolor sit amet, consectetur adip sicing elit, sed do eiusmod.
           </p>

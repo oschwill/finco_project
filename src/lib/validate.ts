@@ -1,5 +1,11 @@
 import Joi from 'joi';
 
+interface RegisterData {
+  [key: string]: any;
+}
+
+type SchemaCallback = (attributes: string[]) => Joi.ObjectSchema;
+
 export const registerAccountSchema = Joi.object({
   name: Joi.string().alphanum().min(3).max(30).required(),
   email: Joi.string()
@@ -19,3 +25,21 @@ export const addTransactionSchema = Joi.object({
   category: Joi.string().min(3).max(30).required(),
   date: Joi.date().iso().required(),
 });
+
+export const dynamicRegisterSchema: SchemaCallback = (attributesToValidate) => {
+  return Joi.object(
+    Object.fromEntries(
+      attributesToValidate.map((attribute: string) => [
+        attribute,
+        registerAccountSchema.extract(attribute) as Joi.Schema,
+      ])
+    )
+  );
+};
+
+export const validateData = (data: RegisterData, cbSchema: SchemaCallback) => {
+  const attributesToValidate = Object.keys(data);
+  const schema = cbSchema(attributesToValidate);
+
+  return schema.validate(data);
+};

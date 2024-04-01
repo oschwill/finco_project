@@ -1,6 +1,6 @@
 'use server';
 
-import { signIn, signOut } from './auth';
+import { auth, signIn, signOut } from './auth';
 import prisma from './db';
 import fs from 'fs/promises';
 import bcrypt from 'bcrypt';
@@ -19,6 +19,7 @@ import {
   TransactionStatistic,
   CharDataPoint,
 } from './dataTypes';
+import { dynamicRegisterSchema, validateData } from './validate';
 
 /*** LOGIN/LOGOUT START ***/
 export const loginUser = async (previousState: undefined, formData: FormData): Promise<any> => {
@@ -54,7 +55,7 @@ export const handleLogout = async () => {
 /*** LOGIN/LOGOUT END ***/
 
 /*** FORGOT PASSWORD START ***/
-export const forgotPassword = async (previousState, formData: FormData) => {
+export const forgotPassword = async (previousState: undefined, formData: FormData) => {
   const email = formData.get('email') as string | null;
 
   if (!email) {
@@ -450,4 +451,96 @@ export const getReportChartData = async (userId: number): Promise<CharDataPoint[
 /*** REPORTS END ***/
 
 /*** USER START ***/
+export const changeUserPassword = async (previousState: undefined, formData: FormData) => {
+  const { oldPassword, newPassword, repeatNewPassword } = Object.fromEntries(formData);
+  const { user } = await auth();
+  const userId = (user as any).id;
+
+  if (newPassword !== repeatNewPassword) {
+    return {
+      error: 'Password and repeated Password must be identical',
+    };
+  }
+
+  if (oldPassword === newPassword) {
+    return {
+      error: 'Please choose another password',
+    };
+  }
+
+  // formObject validieren
+  const { value, error } = validateData(
+    {
+      password: newPassword,
+      passwordRepeat: repeatNewPassword,
+    },
+    dynamicRegisterSchema
+  );
+
+  if (error) {
+    return {
+      error: 'Password must be at least 8 characters long',
+    };
+  }
+
+  // old Password überprüfen
+  try {
+    // hole altes Password
+    const query = await prisma.user.findUnique({
+      where: {
+        id: userId,
+        account_type: 'finco',
+      },
+      select: {
+        password: true,
+      },
+    });
+
+    if (!query.password) {
+      return {
+        error: 'Something went wrong',
+      };
+    }
+
+    const isPassword = await bcrypt.compare(oldPassword as string, query.password);
+
+    // Checke ob altes Paawort korrekt ist
+    if (!isPassword) {
+      return {
+        error: 'Something went wrong',
+      };
+    }
+
+    // query für password change !!! => sollten danach direkt ausloggen? und eine email/oder token verschicken?
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword as string, salt);
+
+    const updatePassword = prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashedPassword,
+        temp_password: null,
+      },
+    });
+
+    if (updatePassword) {
+      for (let key of formData.keys()) {
+        formData.delete(key);
+      }
+
+      return {
+        success: 'Your password has been successfully changed',
+      };
+    }
+
+    throw new Error();
+  } catch (error) {
+    console.log(error);
+    return {
+      error: 'Something went wrong',
+    };
+  }
+};
 /*** USER END ***/
