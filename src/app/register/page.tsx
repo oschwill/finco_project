@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 const SignUp = () => {
   return (
     <main className="flex flex-col items-center">
-      <section className="w-[90%] flex flex-col gap-[75px]">
+      <section className="w-[90%] flex flex-col gap-[75px] mt-8">
         <article className="flex flex-col gap-6">
           <h1 className="text-[3rem] font-bold text-center">Create an account</h1>
           <p className="text-[1.5rem] text-center">

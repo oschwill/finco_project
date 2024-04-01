@@ -20,9 +20,7 @@ const NoCreditCardMessage: React.FC<{ userId: number }> = ({ userId }) => {
       return;
     }
 
-    await changeCreditCardNumber(creditCardInput.value, userId);
-
-    // console.log(creditCardInput.value);
+    await changeCreditCardNumber(creditCardInput.value, userId, setError);
   };
 
   return (

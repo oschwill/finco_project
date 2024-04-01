@@ -1,7 +1,7 @@
 'use client';
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
-import { formatErrorMessage } from './functionHelper';
+import { formatErrorMessage, isValidSixteenDigitNumber } from './functionHelper';
 import { addTransactionSchema, registerAccountSchema } from './validate';
 import { redirect } from 'next/navigation';
 import Swal from 'sweetalert2';
@@ -62,6 +62,10 @@ export const completeRegister = async (
 
   if (!cardNumber) {
     return { isValid: false, message: 'Please fill in your Cardnumber' };
+  }
+
+  if (!isValidSixteenDigitNumber(cardNumber)) {
+    return { isValid: false, message: 'Your Card Number must be at least 16 Characters long!' };
   }
 
   // Wir holen uns die CookieDaten

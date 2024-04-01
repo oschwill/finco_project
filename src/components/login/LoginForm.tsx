@@ -34,7 +34,7 @@ const LoginForm: React.FC = () => {
         <div>
           <label htmlFor="email"></label>
           <input
-            type="text"
+            type="email"
             name="email"
             id="email"
             className="border-2 w-full border-inputBorderColor p-6 rounded-[25px] text-[1.5rem]"

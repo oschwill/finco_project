@@ -24,6 +24,7 @@ model User {
   register_token String? @db.VarChar(12)
   created_at        DateTime @default(now()) @db.Timestamp
   transactions        Transaction[]
+  account_type    AccountType
 
   @@map("users")
 }
@@ -44,4 +45,10 @@ model Transaction {
 enum TransactionType {
   income
   expense
+}
+
+enum AccountType {
+  finco
+  google
+  github
 }
