@@ -515,21 +515,12 @@ export const changeUserPassword = async (previousState: undefined, formData: For
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword as string, salt);
 
-    const updatePassword = prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        password: hashedPassword,
-        temp_password: null,
-      },
-    });
+    // Transaktion starten
+    const hasPasswordChanged = changePasswordAndNotifyUser(userId, hashedPassword)
+      .then((result) => result)
+      .catch((error) => console.error('An error occurred:', error));
 
-    if (updatePassword) {
-      for (let key of formData.keys()) {
-        formData.delete(key);
-      }
-
+    if (hasPasswordChanged) {
       return {
         success: 'Your password has been successfully changed',
       };
@@ -543,4 +534,49 @@ export const changeUserPassword = async (previousState: undefined, formData: For
     };
   }
 };
+
+// Transaction mit Rollback Funktionalität
+async function changePasswordAndNotifyUser(
+  userId: number,
+  hashedPassword: string
+): Promise<boolean> {
+  // Starten einer Transaktion
+  const result = await prisma.$transaction(async (prisma) => {
+    // Update des Passworts
+    const updatePassword = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        password: hashedPassword,
+        temp_password: null,
+      },
+    });
+
+    // E-Mail-Vorlage laden und personalisieren
+    let htmlTemplate = await fs.readFile(
+      `${process.env.EMAIL_TEMPLATE_PATH}/changePassword.html`,
+      'utf8'
+    );
+    htmlTemplate = htmlTemplate.replace('%username%', updatePassword.name);
+
+    // Versuch, die E-Mail zu versenden
+    const hasSend = await sendDynamicEmail({
+      email: updatePassword.email,
+      subject: 'Password Change',
+      text: htmlTemplate,
+      html: htmlTemplate,
+    });
+
+    // Wenn das Versenden der E-Mail fehlschlägt, einen Fehler werfen
+    if (!hasSend) {
+      return false;
+    }
+
+    // Rückgabe eines Erfolgsergebnisses
+    return true;
+  });
+
+  return result;
+}
 /*** USER END ***/

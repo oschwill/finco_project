@@ -1,16 +1,30 @@
 'use client';
 
-import { changeUserPassword } from '@/lib/action';
+import { changeUserPassword, handleLogout } from '@/lib/action';
 import { useFormState } from 'react-dom';
 import FormSubmitButton from '../buttons/FormSubmitButton';
+import { useEffect, useRef } from 'react';
 
 const ChangePassword: React.FC = () => {
   const [state, formAction] = useFormState(changeUserPassword, undefined);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.success) {
+      if (formRef.current) {
+        formRef.current.reset();
+      }
+      // Ausloggen nach 2.5 Sekunden
+      setTimeout(async () => {
+        await handleLogout();
+      }, 2500);
+    }
+  }, [state?.success]);
 
   return (
     <div className="flex flex-col gap-6">
       <h2 className="text-[1.5rem] text-center">Change Password</h2>
-      <form action={formAction} className="flex flex-col gap-8">
+      <form ref={formRef} action={formAction} className="flex flex-col gap-8">
         <div>
           <label htmlFor="oldPassword"></label>
           <input
