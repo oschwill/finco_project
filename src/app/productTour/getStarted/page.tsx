@@ -13,12 +13,13 @@ const GetStarted = () => {
       </div>
 
       <div className="flex w-full  justify-around">
-        <button className="btn text-white px-10 bg-gradient-linear text-[1.25rem]">
-          <Link href={'/login'} className="flex items-center gap-4 ">
-            Get started
-            <Image className="h-5 w5" src="/arrow.svg" alt="arrow" width={20} height={20} />
-          </Link>
-        </button>
+        <Link
+          href={'/login'}
+          className="flex items-center gap-4 btn text-white px-10 bg-gradient-linear text-[1.25rem]"
+        >
+          Get started
+          <Image className="" src="/arrow.svg" alt="arrow" width={20} height={20} />
+        </Link>
       </div>
     </div>
   );

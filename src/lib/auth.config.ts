@@ -40,6 +40,7 @@ export const authConfig = {
       const isOnHomePage = request.nextUrl?.pathname.startsWith('/home');
       const isOnReportsPage = request.nextUrl?.pathname.startsWith('/reports');
       const isOnTransactionPage = request.nextUrl?.pathname.startsWith('/transaction');
+      const isOnGetStartedPage = request.nextUrl?.pathname.startsWith('/productTour');
 
       /* Hier kommt die Berechtigung für alle Seiten nach dem Login noch rein */
       if (
@@ -52,7 +53,12 @@ export const authConfig = {
       }
 
       // wenn eingeloggt dann leiten wir auf die hauptseite um /home
-      if ((isOnLoginPage && user) || (isOnSetUpAccountPage && user) || (isOnRegisterPage && user)) {
+      if (
+        (isOnLoginPage && user) ||
+        (isOnSetUpAccountPage && user) ||
+        (isOnRegisterPage && user) ||
+        (isOnGetStartedPage && user)
+      ) {
         if (!user.credit_card) {
           return Response.redirect(new URL('/home?credit_card=false', request.nextUrl));
         }

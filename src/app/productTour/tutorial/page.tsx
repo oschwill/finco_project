@@ -12,16 +12,16 @@ const Tutorial = () => {
         </p>
       </div>
       <div className="flex w-full  justify-around">
-        <button className="btn text-white text-[1.25rem] px-10 bg-gradient-linear">
-          <Link href={'/login'}>Skip</Link>
-        </button>
-
-        <button className="btn text-white px-10 bg-gradient-linear text-[1.25rem]">
-          <Link href={'/productTour/getStarted'} className="flex items-center gap-4 ">
-            Next
-            <Image className="h-5 w5" src="/arrow.svg" alt="arrow" width={20} height={20} />
-          </Link>
-        </button>
+        <Link href="/login" className="btn text-white text-[1.25rem] px-10 bg-gradient-linear">
+          Skip
+        </Link>
+        <Link
+          href={'/productTour/getStarted'}
+          className="flex items-center gap-4 btn text-white px-10 bg-gradient-linear text-[1.25rem]"
+        >
+          Next
+          <Image className="h-5 w5" src="/arrow.svg" alt="arrow" width={20} height={20} />
+        </Link>
       </div>
     </main>
   );
